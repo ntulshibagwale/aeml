@@ -13,7 +13,8 @@ import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-from .ae_measure2 import *
+#from .ae_measure2 import *
+from ae_measure2 import *
 import librosa
 import cv2
 from sklearn.decomposition import PCA
@@ -379,12 +380,7 @@ def calc_avg_std_diff_for_mismatched_events(channels_feature_vec_1,
         
     return fv_diff_avg_all_channels, fv_diff_std_all_channels
     
-def plot_signal(
-        ax,
-        signal,
-        dt,
-        sig_len,
-        ):
+def plot_signal(ax,signal,dt,sig_len):
     """
     
     Plot raw event signal waveform. 
