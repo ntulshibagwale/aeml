@@ -81,11 +81,11 @@ def load_model(pth_path, model_num, feature_dim, num_classes=5):
     return model
 
 
-def load_PLB_dataset_from_github(
+def load_dataset_from_github(
         url='https://raw.githubusercontent.com/ntulshibagwale/aeml/master/data/220426_PLB_data.json'):
     """
     
-    Given url, loads PLB dataset (json file) from public github repository.
+    Given url, loads dataset (json file) from public github repository.
 
     Parameters
     ----------
@@ -96,15 +96,15 @@ def load_PLB_dataset_from_github(
 
     Returns
     -------
-    PLB : dict
-        Pencil lead break dataset.
+    dataset : dict
+        Dataset.
 
     """
     resp = requests.get(url)
-    PLB = json.loads(resp.text)
-    for key in PLB.keys():
-        PLB[key]  = np.array(PLB[key])
+    dataset = json.loads(resp.text)
+    for key in dataset.keys():
+        dataset[key]  = np.array(dataset[key])
         
-    return PLB
+    return dataset
 
     
