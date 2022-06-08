@@ -49,8 +49,8 @@ def make_data_set(
         
         # Get metadata from file name, which needs to follow a format
         angle.append([raw_files[idx][7:12] for i in range(len(v0))])
-        location.append([raw_files[idx][13:16] for i in range(len(v0))])
-        length.append([raw_files[idx][17:20] for i in range(len(v0))])
+        length.append([raw_files[idx][13:16] for i in range(len(v0))])
+        location.append([raw_files[idx][17:20] for i in range(len(v0))])
     
     # Remove a dimension
     waves = flatten(waves)
