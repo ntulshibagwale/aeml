@@ -13,8 +13,7 @@ import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-#from .ae_measure2 import *
-from ae_measure2 import *
+from .ae_measure2 import *
 import librosa
 import cv2
 from sklearn.decomposition import PCA

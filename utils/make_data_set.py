@@ -14,17 +14,14 @@ Updated: 2022-06-08
 import os
 from os.path import isfile, join
 import json
-from ae_measure2 import filter_ae
-from ae_functions import flatten
+from .ae_measure2 import filter_ae
+from .ae_functions import flatten
 
-if __name__ == "__main__":
+def make_data_set(
+        data_directory='E:/file_cabinet/phd/projects/aeml/data/natfreq/dataset_files',
+        write_directory='E:/file_cabinet/phd/projects/aeml/data/natfreq/',
+        dataset_name='220608_natfreqdataset.json'):
     
-    # Enter directory info
-    data_directory = \
-        'E:/file_cabinet/phd/projects/aeml/data/natfreq/dataset_files'
-    write_directory = 'E:/file_cabinet/phd/projects/aeml/data/natfreq/'
-    write_to = '220608_natfreqdataset.json'
-
     # Pull data files from specified directory
     os.chdir(data_directory) 
     files = [f for f in os.listdir(data_directory) 
@@ -65,5 +62,5 @@ if __name__ == "__main__":
     dataset = {'waves':waves, 'angle':angle, 'location':location,
                'length':length}
     os.chdir(write_directory)
-    with open(write_to, "w") as outfile:
+    with open(dataset_name, "w") as outfile:
         json.dump(dataset, outfile)
