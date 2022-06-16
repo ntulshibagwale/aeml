@@ -18,9 +18,9 @@ from .ae_measure2 import filter_ae
 from .ae_functions import flatten
 
 def make_data_set(
-        data_directory='E:/file_cabinet/phd/projects/aeml/data/natfreq/dataset_files',
+        data_directory='E:/file_cabinet/phd/projects/aeml/data/natfreq/raw_to_be_filtered',
         write_directory='E:/file_cabinet/phd/projects/aeml/data/natfreq/',
-        dataset_name='220608_natfreqdataset.json'):
+        dataset_name='220616_natfreqdataset_for_filtering.json'):
     
     # Pull data files from specified directory
     os.chdir(data_directory) 
@@ -50,7 +50,7 @@ def make_data_set(
         # Get metadata from file name, which needs to follow a format
         angle.append([raw_files[idx][7:12] for i in range(len(v0))])
         length.append([raw_files[idx][13:16] for i in range(len(v0))])
-        location.append([raw_files[idx][17:20] for i in range(len(v0))])
+        location.append([raw_files[idx][17:21] for i in range(len(v0))])
     
     # Remove a dimension
     waves = flatten(waves)
