@@ -14,13 +14,15 @@ Updated: 2022-06-08
 import os
 from os.path import isfile, join
 import json
-from .ae_measure2 import filter_ae
-from .ae_functions import flatten
+from ae_measure2 import filter_ae
+from ae_functions import flatten
+#from .ae_measure2 import filter_ae
+#from .ae_functions import flatten
 
 def make_data_set(
-        data_directory='E:/file_cabinet/phd/projects/aeml/data/natfreq/raw_to_be_filtered',
+        data_directory='E:/file_cabinet/phd/projects/aeml/data/natfreq/raw_data_to_be_filtered',
         write_directory='E:/file_cabinet/phd/projects/aeml/data/natfreq/',
-        dataset_name='220616_natfreqdataset_for_filtering.json'):
+        dataset_name='220627_natfreqdataset_filtering.json'):
     
     # Pull data files from specified directory
     os.chdir(data_directory) 
@@ -36,6 +38,7 @@ def make_data_set(
     angle = []
     location = []
     length = []
+    event = []
     
     for idx, _ in enumerate(raw_files): 
         
@@ -46,7 +49,8 @@ def make_data_set(
         # Get filtered waveforms
         v0, ev = filter_ae(raw, filter, channel_num=0)
         waves.append(v0.tolist())
-        
+        event.append(ev.tolist())
+
         # Get metadata from file name, which needs to follow a format
         angle.append([raw_files[idx][7:12] for i in range(len(v0))])
         length.append([raw_files[idx][13:16] for i in range(len(v0))])
@@ -54,13 +58,18 @@ def make_data_set(
     
     # Remove a dimension
     waves = flatten(waves)
+    event = flatten(event)
     angle = flatten(angle)
     location = flatten(location)
     length = flatten(length) 
     
     # Create dataset in appropriate folder
-    dataset = {'waves':waves, 'angle':angle, 'location':location,
+    dataset = {'waves':waves, 'event': event, 
+               'angle':angle, 'location':location,
                'length':length}
     os.chdir(write_directory)
     with open(dataset_name, "w") as outfile:
         json.dump(dataset, outfile)
+        
+if __name__ == '__main__':
+    make_data_set()
