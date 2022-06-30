@@ -38,8 +38,10 @@ class AcousticEmissionDataset(Dataset):
         self.num_bins = num_bins
         
         # Load in AE Data
+        print("Loading in Dataset from Git...")
         data = load_dataset_from_github(url)
-        
+        print("Successfully loaded in...")
+
         # Separate dict into arrays
         waves = data['waves']           # List of raw waveforms
         #targets = data['target']       # waveform labels (legacy PLB data)
