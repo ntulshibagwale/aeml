@@ -14,6 +14,10 @@ Updated: 2022-06-02
 import torch
 from torch.utils.data import Dataset
 from .load_data import load_dataset_from_github
+#from load_data import load_dataset_from_github
+#from ae_measure2 import wave2vec
+#from ae_measure2 import fft
+
 from torch import tensor
 from .ae_measure2 import wave2vec
 from .ae_measure2 import fft
@@ -37,9 +41,24 @@ class AcousticEmissionDataset(Dataset):
         data = load_dataset_from_github(url)
         
         # Separate dict into arrays
-        waves = data['data']           # List of raw waveforms
-        targets = data['target']       # waveform labels
-        self.angles = data['target_angle']  # angle, one hot encoded
+        waves = data['waves']           # List of raw waveforms
+        #targets = data['target']       # waveform labels (legacy PLB data)
+        locations = data['location']    # where pencil broken
+        self.lengths = data['length']
+        self.events = data['event']
+        self.angles = data['angle']
+        
+        # Map location to a number (starting from 0)
+        targets = []
+        for location in locations:
+            if location == 'topp':
+                targets.append(0)
+            elif location == 'side':
+                targets.append(1)
+            elif location == 'tope':
+                targets.append(2)
+        
+        #self.angles = data['target_angle']  # angle, one hot encoded
         self.targets = tensor(targets,dtype=torch.int64,requires_grad=False)
       
         # One hot encode
