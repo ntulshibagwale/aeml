@@ -13,7 +13,7 @@ Updated: 2022-06-02
 
 import torch
 from torch.utils.data import Dataset
-from .load_data import load_PLB_dataset_from_github
+from .load_data import load_dataset_from_github
 from torch import tensor
 from .ae_measure2 import wave2vec
 from .ae_measure2 import fft
@@ -34,7 +34,7 @@ class AcousticEmissionDataset(Dataset):
         self.num_bins = num_bins
         
         # Load in AE Data
-        data = load_PLB_dataset_from_github(url)
+        data = load_dataset_from_github(url)
         
         # Separate dict into arrays
         waves = data['data']           # List of raw waveforms
