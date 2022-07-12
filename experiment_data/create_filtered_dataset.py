@@ -1,7 +1,9 @@
 """
 
-Executable code for automating the filtering of AE signal by removing "double" events
-and cycling through all the waveforms for checking.
+create_filtered_dataset
+
+Executable code for automating the filtering of AE signal by removing "double" 
+events and cycling through all the waveforms for checking.
 
 Upon running this file, user will be prompted to select experiment folder. The
 experiment folder must contains "waves" and "times" files, and must be named in
@@ -14,8 +16,6 @@ Additionally, code will output .txt files detailing filtered / rejected events.
 
 Kiran Lochun
 
-Updated: 2022-07-8
-
 """
 import pandas as pd
 import numpy as np
@@ -26,12 +26,17 @@ import json
 from tkinter import filedialog
 from tkinter import *
 import datetime
-from acoustic.visuals import create_figure, plot_signal
 import sys 
 
-def flatten(t): # flattens out a list of lists (CHECK)
-    return [item for sublist in t for item in sublist]
-
+# Boiler plate code to ensure scripts can import code from aemlfunctions.
+# Adds project directory to python path.
+proj_dir = os.path.dirname(os.path.abspath(os.curdir))
+if sys.path[0] != proj_dir:
+    sys.path.insert(0, proj_dir)
+print(f"Project directory: {proj_dir}")  
+from waves.misc import flatten
+from waves.visuals import create_figure, plot_signal
+from waves.load_data import read_ae_file
 
 def auto_filter_ae(ae_file, time_file, max_reverb_time, data_directory):
     """
@@ -109,67 +114,6 @@ def auto_filter_ae(ae_file, time_file, max_reverb_time, data_directory):
         f.write(write_string)
     
     return filtered_signals, filtered_events, fs, channel_num, sig_length
-
-
-def read_ae_file(ae_file):
-    """
-    
-    Function loads in experimental AE data from .txt files generated from
-    Digital Wave software. 
-    
-    Parameters
-    ----------
-    ae_file : str
-        File path of .txt file containing all waveforms (voltage over time).
-    
-    Returns
-    -------
-    signals : array-like
-        Each index of list points to list of waveform signals from a sensor.
-        i.e signals[0] will return all the AE hits from sensor 1, and 
-        signals[0][0] will return the 1st waveform from sensor 1 (with size
-        sig_length).
-    ev : array-like
-        List of event numbers, indexed from 1 (first event in test). All 
-        sensors trigger at same time, so events are equivalent in time.
-    fs : int
-        Sampling frequency. Typically 10**7 Hz or 10 MHz with Digital Wave.
-    channel_num : int
-        Number of channels / AE sensors used.
-    sig_length : int
-        Number of samples in waveform event / hit. 
-
-    """
-    # Read in .txt file generated from Digital Wave DAQ / Software
-    f = open(ae_file)
-    data = f.readlines()
-    f.close()
-    
-    # Get the signal processing parameters from header
-    header = data[0]
-    fs = int(header.split()[0]) * 10**6  # DAQ sampling freq (usually 10 MHz)
-    sig_length = int(header.split()[2])  # Number of samples in waveform event
-    channel_num = int(header.split()[3]) # Number of AE sensors used
-    
-    # Read in waveform data and turn into list of sensors pointing to AE hits
-    lines = data[1:]
-    signals = [] 
-    
-    # Loop through the columns taken from .txt file (waves from each sensor)
-    for channel in range(0,channel_num):
-        # Get data from the sensor's respective column
-        v = np.array([float(line.split()[channel]) for line in lines])
-        # Turn the long appended column into separate AE hits using sample num
-        z = []
-        for i in range(0,len(v),sig_length):
-            z.append(v[i:i+sig_length])    
-        signals.append(z)
-    
-    # Create array of corresponding event numbers 
-    ev = np.arange(len(signals[0]))+1 # all sensors have same number of events
-
-    return signals, ev, fs, channel_num, sig_length
-
 
 def wave_viz_filter(signals, ev, time_file, dt, sig_length):
     """
@@ -252,7 +196,6 @@ def wave_viz_filter(signals, ev, time_file, dt, sig_length):
         
     return filtered_signals, filtered_events
 
-
 def make_data_set():
     """
         
@@ -299,12 +242,13 @@ def make_data_set():
     #     hanning = False
     
     # Raw AE data and metadata
-    waves = []
-    angle = []
-    location = []
-    length = []
-    event = []
-    sensor = []
+    waves = []     # voltage signal
+    angle = []     # angle at which plb was done
+    location = []  # source type
+    length = []    # boundary conditions
+    event = []     # event number from AE experiment
+    sensor = []    # which sensor it came from
+    distance = []  # distance wrt to middle
 
     # Loop through each pair of raw and time files
     for idx, _ in enumerate(raw_files):
@@ -335,6 +279,7 @@ def make_data_set():
             angle.append([meta[1] for i in range(len(ev))])
             length.append([meta[2] for i in range(len(ev))])
             location.append([meta[3] for i in range(len(ev))])
+            distance.append([meta[4] for i in range(len(ev))])
             sensor.append([(channel_idx+1) for i in range(len(ev))])
     
     # Remove a dimension 
@@ -344,14 +289,16 @@ def make_data_set():
     location = flatten(location)
     length = flatten(length) 
     sensor = flatten(sensor)
-    
+    distance = flatten(distance)
+
     # Create dataset in appropriate folder
     dataset = {'waves' : waves,
                'event' : event, 
                'angle' : angle,
                'location' : location,
                'length' : length,
-               'sensor' : sensor}
+               'sensor' : sensor,
+               'distance' : distance}
     
     os.chdir(data_directory)
     
@@ -365,9 +312,11 @@ def make_data_set():
     #     hAddendum = '_noH'
     dataset_name = time_stamp + dataset_name + ".json"
     
+    os.chdir('..')
+    os.chdir('..')
+    os.chdir('./filtered')
     with open(dataset_name, "w") as outfile:
         json.dump(dataset, outfile)
-        
         
 if __name__ == '__main__':
     make_data_set()
