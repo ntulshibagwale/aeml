@@ -42,7 +42,7 @@ class AcousticEmissionDataset(Dataset):
         # Separate dict into arrays
         waves = data['waves']           # List of raw waveforms
         self.waves = tensor(waves,dtype=torch.float32,requires_grad=False)                          
-        locations = data['location']    # where pencil broken
+        location = data['location']    # where pencil broken
         self.length = data['length']
         self.event = data['event']
         self.angle = data['angle']
@@ -52,14 +52,15 @@ class AcousticEmissionDataset(Dataset):
         # Location is the source we are trying to identify
         # Map location to a number (starting from 0)
         label = []
-        for location in locations:
-            if location == 'front':
+        for loc in location:
+            if loc == 'front':
                 label.append(0)
-            elif location == 'tope':
+            elif loc == 'tope':
                 label.append(1)
-            elif location == 'backcorner':
+            elif loc == 'backcorner':
                 label.append(2)
         
+        self.location = location
         self.label = tensor(label,dtype=torch.int64,requires_grad=False)
       
         # One hot encode the label
@@ -111,7 +112,7 @@ class AcousticEmissionDataset(Dataset):
             
         y = self.label_one_hot[index] 
               
-        return x, y # input example, label
+        return x, y, index # input example, label
     
     def __len__(self): # number of samples
         return self.n_samples

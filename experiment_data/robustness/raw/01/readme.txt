@@ -21,6 +21,3 @@ backcorner corresponds to pulling the lead into the plate from the backside,
 topedge corrsesponds to same placement as backcorner, but coming down onto the
 plate (downward vs. lateral), and front corresponds to the front of the plate
 which would expect to be largest flexural excitation.
-
-Note I split this day's experiments into experiment 08 and 09 to make filtering
-into smaller chunks.

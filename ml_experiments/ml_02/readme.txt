@@ -1,0 +1,1 @@
+Robustness expirement of AE algorithm. Data is separated into two chunks: the waveforms from the resonant transducers and the waveforms from the broadband transducers.
