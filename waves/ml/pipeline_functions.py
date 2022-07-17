@@ -65,9 +65,13 @@ def model_pipeline(config=None):
         print('---------- SAVE MODEL --------------------------------------------')
         
         print('Saving model to run directory...\n') # Save model local and to w&b 
-        torch.save(model.state_dict(), wandb.run.dir+'\model.pth')
+        # torch.save(model.state_dict(), wandb.run.dir+'\model.pth')
+        # artifact = wandb.Artifact('model', type='model')
+        # artifact.add_file(wandb.run.dir+'\model.pth')
+        # wandb.log_artifact(artifact)
+        torch.save(model.state_dict(),'model.pth')
         artifact = wandb.Artifact('model', type='model')
-        artifact.add_file(wandb.run.dir+'\model.pth')
+        artifact.add_file('model.pth')
         wandb.log_artifact(artifact)
         print('\nModel was trained and evaluated.')
         print('Results, log, and trained model are backed up to W&B!\n')
