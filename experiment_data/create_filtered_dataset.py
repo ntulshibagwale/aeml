@@ -27,6 +27,7 @@ from tkinter import filedialog
 from tkinter import *
 import datetime
 import sys 
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 # Boiler plate code to ensure scripts can import code from aemlfunctions.
 # Adds project directory to python path.

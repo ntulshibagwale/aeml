@@ -6,6 +6,26 @@ Code for processing waveforms and extracting features.
 import numpy as np
 from librosa import zero_crossings as zc
 from scipy.integrate import simps
+from sklearn.decomposition import PCA
+
+def dimensionality_reduction(signal):
+    """
+    
+    Applies PCA to perform a dimensionality reduction on a signal.
+
+    Parameters
+    ----------
+    signal: array-like:
+        Signal to be processed.
+    
+    Returns
+    -------
+    processedSignal: Signal with dimensionality reduction applied.
+    """
+    pca = PCA()
+    pca.fit(signal)
+    processedSignal = pca.transform(signal)
+    return processedSignal
 
 def get_signal_start_end(waveform, threshold=0.1):
     """
@@ -117,6 +137,18 @@ def get_peak_freq(waveform, dt=10**-7, low=None, high=None):
     peak_freq = w[max_index]
 
     return peak_freq
+
+def hanning(signal):
+    """
+    
+    Applies Hanning window to a given signal.
+    
+    Parameters
+    ----------
+    signal: array-like
+        Signal to be transformed.
+    """
+    return signal * np.hanning(signal.size)
 
 def get_freq_centroid(waveform, dt=10**-7, low=None, high=None):
     """
